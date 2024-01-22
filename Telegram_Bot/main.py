@@ -1,3 +1,4 @@
+
 import asyncio
 import logging
 from aiogram import Bot
@@ -13,8 +14,18 @@ dp = Dispatcher()
 
 
 @dp.message()
-async def reply_as_echo(message:types.Message):
-    await message.reply(text=message.text)
+async def answer_any_type(message: types.Message):
+    if message.text:
+        await message.answer(text=message.text)
+    elif message.sticker:
+        await message.answer_sticker(sticker=message.sticker.file_id)
+    elif message.photo:
+        # השתמש במזהה התמונה מהודעת המשתמש
+        photo_id = message.photo[-1].file_id
+        # שלח את אותה התמונה בתשובה
+        await message.answer_photo(photo=photo_id)
+    else:
+        await message.reply("An other media type was used!!! ")
 
 @dp.message()
 async def main():
