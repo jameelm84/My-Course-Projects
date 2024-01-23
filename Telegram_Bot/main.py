@@ -20,9 +20,9 @@ async def answer_any_type(message: types.Message):
     elif message.sticker:
         await message.answer_sticker(sticker=message.sticker.file_id)
     elif message.photo:
-        # השתמש במזהה התמונה מהודעת המשתמש
+        # use the image id from user
         photo_id = message.photo[-1].file_id
-        # שלח את אותה התמונה בתשובה
+        # send the same image
         await message.answer_photo(photo=photo_id)
     else:
         await message.reply("An other media type was used!!! ")
