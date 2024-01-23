@@ -1,10 +1,11 @@
-
 import asyncio
 import logging
 from aiogram import Bot
 from aiogram import Dispatcher
 from aiogram import types
 import os
+
+from aiogram.filters import CommandStart
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -12,20 +13,19 @@ load_dotenv()
 bot = Bot(token=os.getenv("BOT_TOKEN"))
 dp = Dispatcher()
 
+@dp.message(CommandStart())
+async def handle_start(message: types.Message):
+    await message.answer(f"Hello , {message.from_user.full_name}. ~Welcome To My Bot ~ Let's begin!")
+
 
 @dp.message()
-async def answer_any_type(message: types.Message):
-    if message.text:
-        await message.answer(text=message.text)
-    elif message.sticker:
-        await message.answer_sticker(sticker=message.sticker.file_id)
-    elif message.photo:
-        # use the image id from user
-        photo_id = message.photo[-1].file_id
-        # send the same image
-        await message.answer_photo(photo=photo_id)
-    else:
-        await message.reply("An other media type was used!!! ")
+async def answer_as_echo(message: types.Message):
+    try:
+        await message.send_copy(chat_id=message.chat.id)
+    except Exception:
+        await message.answer("Unsupported media type...")
+
+
 
 @dp.message()
 async def main():
@@ -35,3 +35,19 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+
+
+# @dp.message()
+# async def answer_any_type(message: types.Message):
+#     if message.text:
+#         await message.answer(text=message.text)
+#     elif message.sticker:
+#         await message.answer_sticker(sticker=message.sticker.file_id)
+#     elif message.photo:
+#         # use the image id from user
+#         photo_id = message.photo[-1].file_id
+#         # send the same image
+#         await message.answer_photo(photo=photo_id)
+#     else:
+#         await message.reply("An other media type was used!!! ")
